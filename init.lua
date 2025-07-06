@@ -140,7 +140,16 @@ vim.o.timeoutlen = 300
 -- Configure how new splits should be opened
 vim.o.splitright = true
 vim.o.splitbelow = true
+vim.o.tabstop = 2
+vim.o.softtabstop = 2
+vim.o.shiftwidth = 2
+vim.o.expandtab = true
+vim.o.spell = false
 
+vim.o.tabstop = 2
+vim.o.softtabstop = 2
+vim.o.shiftwidth = 2
+vim.o.expandtab = true
 -- Sets how neovim will display certain whitespace characters in the editor.
 --  See `:help 'list'`
 --  and `:help 'listchars'`
@@ -159,7 +168,7 @@ vim.o.inccommand = 'split'
 vim.o.cursorline = true
 
 -- Minimal number of screen lines to keep above and below the cursor.
-vim.o.scrolloff = 10
+vim.o.scrolloff = 4
 
 -- if performing an operation that would fail due to unsaved changes in the buffer (like `:q`),
 -- instead raise a dialog asking if you wish to save the current file(s)
@@ -191,7 +200,7 @@ vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' }
 -- vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
 
 -- Keybinds to make split navigation easier.
---  Use CTRL+<hjkl> to switch between windows
+--  Use CTRL+<hjl> to switch between windows
 --
 --  See `:help wincmd` for a list of all window commands
 vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
@@ -248,6 +257,25 @@ rtp:prepend(lazypath)
 require('lazy').setup({
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   'NMAC427/guess-indent.nvim', -- Detect tabstop and shiftwidth automatically
+  -- 'mg979/vim-visual-multi', -- Detect tabstop and shiftwidth automatically
+  -- lazy.nvim:
+  {
+    'smoka7/multicursors.nvim',
+    event = 'VeryLazy',
+    dependencies = {
+      'nvimtools/hydra.nvim',
+    },
+    opts = {},
+    cmd = { 'MCstart', 'MCvisual', 'MCclear', 'MCpattern', 'MCvisualPattern', 'MCunderCursor' },
+    keys = {
+      {
+        mode = { 'v', 'n' },
+        '<Leader>m',
+        '<cmd>MCstart<cr>',
+        desc = 'Create a selection for selected text or word under the cursor',
+      },
+    },
+  },
 
   -- NOTE: Plugins can also be added by using a table,
   -- with the first argument being the link and the following
@@ -350,7 +378,210 @@ require('lazy').setup({
       },
     },
   },
-
+  {
+    'saecki/crates.nvim',
+    tag = 'stable',
+    event = { 'BufRead Cargo.toml' },
+    config = function()
+      require('crates').setup {
+        smart_insert = true,
+        remove_enabled_default_features = true,
+        remove_empty_features = true,
+        insert_closing_quote = true,
+        autoload = true,
+        autoupdate = true,
+        autoupdate_throttle = 250,
+        loading_indicator = true,
+        search_indicator = true,
+        date_format = '%Y-%m-%d',
+        thousands_separator = '.',
+        notification_title = 'crates.nvim',
+        curl_args = { '-sL', '--retry', '1' },
+        max_parallel_requests = 80,
+        expand_crate_moves_cursor = true,
+        enable_update_available_warning = true,
+        on_attach = function(bufnr) end,
+        text = {
+          searching = '   Searching',
+          loading = '   Loading',
+          version = '   %s',
+          prerelease = '   %s',
+          yanked = '   %s',
+          nomatch = '   No match',
+          upgrade = '   %s',
+          error = '   Error fetching crate',
+        },
+        highlight = {
+          searching = 'CratesNvimSearching',
+          loading = 'CratesNvimLoading',
+          version = 'CratesNvimVersion',
+          prerelease = 'CratesNvimPreRelease',
+          yanked = 'CratesNvimYanked',
+          nomatch = 'CratesNvimNoMatch',
+          upgrade = 'CratesNvimUpgrade',
+          error = 'CratesNvimError',
+        },
+        popup = {
+          autofocus = false,
+          hide_on_select = false,
+          copy_register = '"',
+          style = 'minimal',
+          border = 'none',
+          show_version_date = false,
+          show_dependency_version = true,
+          max_height = 30,
+          min_width = 20,
+          padding = 1,
+          text = {
+            title = ' %s',
+            pill_left = '',
+            pill_right = '',
+            description = '%s',
+            created_label = ' created        ',
+            created = '%s',
+            updated_label = ' updated        ',
+            updated = '%s',
+            downloads_label = ' downloads      ',
+            downloads = '%s',
+            homepage_label = ' homepage       ',
+            homepage = '%s',
+            repository_label = ' repository     ',
+            repository = '%s',
+            documentation_label = ' documentation  ',
+            documentation = '%s',
+            crates_io_label = ' crates.io      ',
+            crates_io = '%s',
+            lib_rs_label = ' lib.rs         ',
+            lib_rs = '%s',
+            categories_label = ' categories     ',
+            keywords_label = ' keywords       ',
+            version = '  %s',
+            prerelease = ' %s',
+            yanked = ' %s',
+            version_date = '  %s',
+            feature = '  %s',
+            enabled = ' %s',
+            transitive = ' %s',
+            normal_dependencies_title = ' Dependencies',
+            build_dependencies_title = ' Build dependencies',
+            dev_dependencies_title = ' Dev dependencies',
+            dependency = '  %s',
+            optional = ' %s',
+            dependency_version = '  %s',
+            loading = '  ',
+          },
+          highlight = {
+            title = 'CratesNvimPopupTitle',
+            pill_text = 'CratesNvimPopupPillText',
+            pill_border = 'CratesNvimPopupPillBorder',
+            description = 'CratesNvimPopupDescription',
+            created_label = 'CratesNvimPopupLabel',
+            created = 'CratesNvimPopupValue',
+            updated_label = 'CratesNvimPopupLabel',
+            updated = 'CratesNvimPopupValue',
+            downloads_label = 'CratesNvimPopupLabel',
+            downloads = 'CratesNvimPopupValue',
+            homepage_label = 'CratesNvimPopupLabel',
+            homepage = 'CratesNvimPopupUrl',
+            repository_label = 'CratesNvimPopupLabel',
+            repository = 'CratesNvimPopupUrl',
+            documentation_label = 'CratesNvimPopupLabel',
+            documentation = 'CratesNvimPopupUrl',
+            crates_io_label = 'CratesNvimPopupLabel',
+            crates_io = 'CratesNvimPopupUrl',
+            lib_rs_label = 'CratesNvimPopupLabel',
+            lib_rs = 'CratesNvimPopupUrl',
+            categories_label = 'CratesNvimPopupLabel',
+            keywords_label = 'CratesNvimPopupLabel',
+            version = 'CratesNvimPopupVersion',
+            prerelease = 'CratesNvimPopupPreRelease',
+            yanked = 'CratesNvimPopupYanked',
+            version_date = 'CratesNvimPopupVersionDate',
+            feature = 'CratesNvimPopupFeature',
+            enabled = 'CratesNvimPopupEnabled',
+            transitive = 'CratesNvimPopupTransitive',
+            normal_dependencies_title = 'CratesNvimPopupNormalDependenciesTitle',
+            build_dependencies_title = 'CratesNvimPopupBuildDependenciesTitle',
+            dev_dependencies_title = 'CratesNvimPopupDevDependenciesTitle',
+            dependency = 'CratesNvimPopupDependency',
+            optional = 'CratesNvimPopupOptional',
+            dependency_version = 'CratesNvimPopupDependencyVersion',
+            loading = 'CratesNvimPopupLoading',
+          },
+          keys = {
+            hide = { 'q', '<esc>' },
+            open_url = { '<cr>' },
+            select = { '<cr>' },
+            select_alt = { 's' },
+            toggle_feature = { '<cr>' },
+            copy_value = { 'yy' },
+            goto_item = { 'gd', 'K', '<C-LeftMouse>' },
+            jump_forward = { '<c-i>' },
+            jump_back = { '<c-o>', '<C-RightMouse>' },
+          },
+        },
+        completion = {
+          insert_closing_quote = true,
+          text = {
+            prerelease = '  pre-release ',
+            yanked = '  yanked ',
+          },
+          cmp = {
+            enabled = false,
+            use_custom_kind = true,
+            kind_text = {
+              version = 'Version',
+              feature = 'Feature',
+            },
+            kind_highlight = {
+              version = 'CmpItemKindVersion',
+              feature = 'CmpItemKindFeature',
+            },
+          },
+          coq = {
+            enabled = false,
+            name = 'crates.nvim',
+          },
+          blink = {
+            use_custom_kind = true,
+            kind_text = {
+              version = 'Version',
+              feature = 'Feature',
+            },
+            kind_highlight = {
+              version = 'BlinkCmpKindVersion',
+              feature = 'BlinkCmpKindFeature',
+            },
+            kind_icon = {
+              version = ' ',
+              feature = ' ',
+            },
+          },
+          crates = {
+            enabled = true,
+            min_chars = 3,
+            max_results = 8,
+          },
+        },
+        null_ls = {
+          enabled = false,
+          name = 'crates.nvim',
+        },
+        neoconf = {
+          enabled = false,
+          namespace = 'crates',
+        },
+        lsp = {
+          enabled = false,
+          name = 'crates.nvim',
+          on_attach = function(client, bufnr) end,
+          actions = false,
+          completion = false,
+          hover = false,
+        },
+      }
+    end,
+  },
   -- NOTE: Plugins can specify dependencies.
   --
   -- The dependencies are proper plugin specifications as well - anything
@@ -835,7 +1066,7 @@ require('lazy').setup({
         -- <c-k>: Toggle signature help
         --
         -- See :h blink-cmp-config-keymap for defining your own keymap
-        preset = 'default',
+        preset = 'super-tab',
 
         -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
         --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
@@ -850,7 +1081,7 @@ require('lazy').setup({
       completion = {
         -- By default, you may press `<c-space>` to show the documentation.
         -- Optionally, set `auto_show = true` to show the documentation after a delay.
-        documentation = { auto_show = false, auto_show_delay_ms = 500 },
+        documentation = { auto_show = true, auto_show_delay_ms = 500 },
       },
 
       sources = {
@@ -869,7 +1100,7 @@ require('lazy').setup({
       -- the rust implementation via `'prefer_rust_with_warning'`
       --
       -- See :h blink-cmp-config-fuzzy for more information
-      fuzzy = { implementation = 'lua' },
+      fuzzy = { implementation = 'prefer_rust_with_warning' },
 
       -- Shows a signature help window while you type arguments for a function
       signature = { enabled = true },
