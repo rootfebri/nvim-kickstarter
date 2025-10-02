@@ -1,3 +1,4 @@
+vim.g.rust_recommended_style = 0
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 vim.g.have_nerd_font = true
@@ -90,6 +91,19 @@ require('lazy').setup({
     'mg979/vim-visual-multi',
     branch = 'master',
   },
+
+  -- START Tailwind CSS
+  {
+    'NvChad/nvim-colorizer.lua',
+    opts = {
+      user_default_options = {
+        tailwind = true,
+        mode = 'foreground',
+      },
+    },
+  },
+  -- END Tailwind CSS
+
   {
     'lewis6991/gitsigns.nvim',
     opts = {
@@ -423,8 +437,61 @@ require('lazy').setup({
       },
     },
   },
+  -- { 'roobert/tailwindcss-colorizer-cmp.nvim', opts = {} },
+  -- {
+  --   'hrsh7th/nvim-cmp',
+  --   optional = true,
+  --   dependencies = {
+  --     { 'roobert/tailwindcss-colorizer-cmp.nvim', opts = {} },
+  --   },
+  --   opts = function(_, opts)
+  --     -- original LazyVim kind icon formatter
+  --     local format_kinds = opts.formatting.format
+  --     opts.formatting.format = function(entry, item)
+  --       format_kinds(entry, item) -- add icons
+  --       return require('tailwindcss-colorizer-cmp').formatter(entry, item)
+  --     end
+  --   end,
+  -- },
   {
     'neovim/nvim-lspconfig',
+    -- opts = {
+    --   servers = {
+    --     tailwindcss = {
+    --       filetypes_exclude = { 'markdown' },
+    --       filetypes_include = { 'rust', 'rs' },
+    --     },
+    --   },
+    -- },
+    -- setup = {
+    --   tailwindcss = function(_, opts)
+    --     opts.filetypes = opts.filetypes or {}
+    --
+    --     vim.list_extend(opts.filetypes, vim.lsp.config.tailwindcss.filetypes)
+    --
+    --     --- @param ft string
+    --     opts.filetypes = vim.tbl_filter(function(ft)
+    --       return not vim.tbl_contains(opts.filetypes_exclude or {}, ft)
+    --     end, opts.filetypes)
+    --
+    --     opts.settings = {
+    --       tailwindCSS = {
+    --         includeLanguages = {
+    --           elixir = 'html-eex',
+    --           eelixir = 'html-eex',
+    --           heex = 'html-eex',
+    --           rust = 'html',
+    --           rs = 'html',
+    --         },
+    --         experimental = {
+    --           classRegex = { 'class: "(.*)"', '"([^"]+)"' },
+    --         },
+    --       },
+    --     }
+    --
+    --     vim.list_extend(opts.filetypes, opts.filetypes_include or {})
+    --   end,
+    -- },
     dependencies = {
       { 'mason-org/mason.nvim', opts = {} },
       'mason-org/mason-lspconfig.nvim',
@@ -647,6 +714,17 @@ require('lazy').setup({
 
       signature = { enabled = true },
     },
+  },
+
+  {
+    'kylechui/nvim-surround',
+    version = '^3.0.0', -- Use for stability; omit to use `main` branch for the latest features
+    event = 'VeryLazy',
+    config = function()
+      require('nvim-surround').setup {
+        -- Configuration here, or leave empty to use defaults
+      }
+    end,
   },
 
   {
